@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun Riddle Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+            background-color: #f4f4f9;
+            transition: background-color 0.5s;
+        }
+
+        .container {
+            margin: 50px auto;
+            padding: 20px;
+            width: 80%;
+            max-width: 500px;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h1 {
+            color: #007bff;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin: 10px 5px;
+            font-size: 16px;
+            color: #fff;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        input[type="text"] {
+            width: calc(100% - 20px);
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .feedback {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .correct {
+            color: #4caf50;
+            background-color: #e8f5e9;
+        }
+
+        .wrong {
+            color: #f44336;
+            background-color: #fdecea;
+        }
+
+        .score {
+            font-weight: bold;
+            color: #333;
+            margin: 20px 0;
+        }
+
+        .timer {
+            font-size: 18px;
+            color: #ff5722;
+            font-weight: bold;
+        }
+
+        .emoji {
+            font-size: 50px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Are you smarter than a 5th grader?</h1>
+        <p>Try out these riddles and see!</p>
+        <p id="riddle"></p>
+        <button onclick="generateRiddle()">Get Riddle</button>
+        <button onclick="showHint()">Show Hint</button>
+
+        <p class="timer" id="timer" style="display: none;">Time left: 10s</p>
+
+        <input type="text" id="answerInput" placeholder="Enter your answer here...">
+        <button onclick="checkAnswer()">Submit Answer</button>
+
+        <div class="emoji" id="emoji" style="display: none;">🎉</div>
+        <p class="feedback" id="feedback" style="display: none;"></p>
+        <p class="hint" id="hint" style="display: none;"></p>
+        <p class="score" id="score">Score: 0 | High Score: 0</p>
+    </div>
+
+    <script>
+        const riddles = [
+            { question: "I speak without a mouth and hear without ears. I have no body, but I come alive with wind. What am I?", answer: "echo", hint: "It's a sound-related phenomenon." },
+            { question: "The more of this you take, the more you leave behind. What is it?", answer: "footsteps", hint: "Think about moving forward." },
+            { question: "What has to be broken before you can use it?", answer: "egg", hint: "It's something fragile and edible." },
+            { question: "What has many keys but can't open a single lock?", answer: "piano", hint: "It's a musical instrument." },
+            { question: "What has hands but can't clap?", answer: "clock", hint: "It's something that shows time." }
+        ];
+
+        let currentRiddle = null;
+        let score = 0;
+        let highScore = 0;
+        let timerInterval = null;
+        let timeLeft = 10;
+
+        function randomBackgroundColor() {
+            const colors = ["#FFDDC1", "#D5AAFF", "#B3F7EF", "#FFF59D", "#FFABAB"];
+            document.body.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function generateRiddle() {
+            randomBackgroundColor();
+            const randomIndex = Math.floor(Math.random() * riddles.length);
+            currentRiddle = riddles[randomIndex];
+            document.getElementById("riddle").textContent = currentRiddle.question;
+            document.getElementById("feedback").style.display = "none";
+            document.getElementById("hint").style.display = "none";
+            document.getElementById("answerInput").value = "";
+            document.getElementById("emoji").style.display = "none";
+
+            startTimer();
+        }
+
+        function showHint() {
+            if (!currentRiddle) {
+                alert("Please get a riddle first!");
+                return;
+            }
+            document.getElementById("hint").textContent = `Hint: ${currentRiddle.hint}`;
+            document.getElementById("hint").style.display = "block";
+        }
+
+        function checkAnswer() {
+            clearInterval(timerInterval);
+            const userAnswer = document.getElementById("answerInput").value.trim().toLowerCase();
+            const feedback = document.getElementById("feedback");
+            const emoji = document.getElementById("emoji");
+            
+
+            if (!currentRiddle) {
+                feedback.textContent = "Please get a riddle first!";
+                feedback.className = "feedback wrong";
+                feedback.style.display = "block";
+                return;
+            }
+
+            if (userAnswer === currentRiddle.answer) {
+                feedback.textContent = "Correct! 🎉";
+                feedback.className = "feedback correct";
+                emoji.textContent = "🎉";
+                score++;
+                highScore = Math.max(highScore, score);
+            } else {
+                feedback.textContent = `Wrong! The correct answer is: ${currentRiddle.answer}`;
+                feedback.className = "feedback wrong";
+                emoji.textContent = "😢";
+                score = 0; // Reset score on wrong answer
+            }
+
+            emoji.style.display = "block";
+            feedback.style.display = "block";
+            document.getElementById("score").textContent = `Score: ${score} | High Score: ${highScore}`;
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 10;
+            document.getElementById("timer").style.display = "block";
+            document.getElementById("timer").textContent = `Time left: ${timeLeft}s`;
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                document.getElementById("timer").textContent = `Time left: ${timeLeft}s`;
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById("timer").textContent = "Time's up!";
+                    checkAnswer();
+                }
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,23 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    color: #000001;
+    background-color:#ADD8E6;
+}
+.resumeListHeading {
+    font-weight: bold;
+}
+li {
+    font-size: 14px;
+    font-weight: normal;
+}
+a {
+    color: darkblue;
+}
+.common.footer {
+    text-align: center; /* Horizontally centers the text */
+    margin-top: 20px; /* Adds spacing above the footer */
+    padding: 10px; /* Optional: Adds padding inside the footer */
+    color: #333; /* Optional: Text color */
+    font-size: 12px; /* Adjust font size */
+}
